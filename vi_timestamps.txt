@@ -1,0 +1,27 @@
+1: 0.100-1.537 | Xin chào.
+2: 1.487-5.175 | Cảm ơn bạn đã sử dụng bài kiểm tra Core Skill Test.
+3: 5.175-12.925 | Từ đây, chúng tôi sẽ tiến hành một bài kiểm tra đánh giá đơn giản nhằm tìm hiểu xu hướng suy nghĩ, hành động và quan điểm làm việc của bạn.
+4: 12.925-16.550 | Bài kiểm tra này không có câu trả lời đúng hay sai.
+5: 16.550-24.400 | Bằng cách trả lời thành thật về bản thân, kết quả sẽ giúp bạn tìm ra phong cách làm việc phù hợp và vai trò mà bạn có thể phát huy năng lực tốt nhất.
+6: 24.400-27.612 | Bài kiểm tra gồm tổng cộng 50 câu hỏi.
+7: 27.612-34.725 | Với mỗi câu hỏi, hãy chọn một trong bốn đáp án A, B, C hoặc D mà bạn cảm thấy gần nhất với bản thân.
+8: 34.725-41.100 | Chúng tôi khuyến khích bạn không suy nghĩ quá nhiều, hãy trả lời theo cảm nhận tự nhiên của mình trong cuộc sống hằng ngày.
+9: 41.100-43.787 | Trước tiên, hãy chọn ngôn ngữ.
+10: 43.787-48.162 | Bạn có thể chọn tiếng Nhật hoặc tiếng Việt bằng nút chuyển đổi trên màn hình.
+11: 48.162-51.262 | Tiếp theo, hãy chọn loại bài kiểm tra.
+12: 51.262-57.900 | Nếu bạn là nhân viên vận hành, nút bên phải đã được chọn sẵn là kiểm tra dành cho nhân viên, vui lòng giữ nguyên.
+13: 57.900-63.362 | Nếu bạn là quản lý, hãy trượt sang nút bên phải để chuyển sang kiểm tra dành cho quản lý.
+14: 63.362-66.962 | Tiếp theo, hãy nhập MES ID của bạn.
+15: 66.962-73.312 | Nếu bạn chưa có MES ID, vui lòng hỏi người phụ trách để nhận số ID tạm thời và nhập vào.
+16: 73.312-77.450 | Sau khi nhập ID, tên của bạn sẽ hiển thị trên màn hình.
+17: 77.450-82.087 | Khi đã xác nhận tên, hãy nhấn nút bắt đầu kiểm tra ở cuối màn hình.
+18: 82.087-85.075 | Xin cảm ơn và chúc bạn làm bài tốt.
+
+--- key segments ---
+  [lang] 9: 41.100-43.787 | Trước tiên, hãy chọn ngôn ngữ.
+  [type] 11: 48.162-51.262 | Tiếp theo, hãy chọn loại bài kiểm tra.
+  [type] 12: 51.262-57.900 | Nếu bạn là nhân viên vận hành, nút bên phải đã được chọn sẵn là kiểm tra dành cho nhân viên, vui lòng giữ nguyên.
+  [type] 13: 57.900-63.362 | Nếu bạn là quản lý, hãy trượt sang nút bên phải để chuyển sang kiểm tra dành cho quản lý.
+  [mesid] 14: 63.362-66.962 | Tiếp theo, hãy nhập MES ID của bạn.
+  [mesid] 15: 66.962-73.312 | Nếu bạn chưa có MES ID, vui lòng hỏi người phụ trách để nhận số ID tạm thời và nhập vào.
+  [name] 16: 73.312-77.450 | Sau khi nhập ID, tên của bạn sẽ hiển thị trên màn hình.

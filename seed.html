@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>仮データ注入</title>
+<style>
+body{font-family:sans-serif;background:#060914;color:#e0f0ff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;gap:16px;}
+h2{font-size:22px;margin:0;}
+p{color:rgba(180,220,255,.7);margin:0;font-size:14px;}
+button{padding:14px 36px;font-size:16px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(180deg,#40b0ff,#0050d8);color:#fff;letter-spacing:.06em;}
+button:hover{opacity:.85;}
+#msg{font-size:15px;font-weight:700;color:#22e880;min-height:24px;}
+</style>
+</head>
+<body>
+<h2>仮データ注入ツール</h2>
+<p>50件の仮データをlocalStorageに書き込みます。</p>
+<button onclick="run()">注入する</button>
+<div id="msg"></div>
+<script src="data/seed.js"></script>
+<script>
+function run(){
+  const n = (function(){
+    // seed.js は即時実行済みなので再実行はしない。件数だけ確認。
+    const d = JSON.parse(localStorage.getItem('shindan_results')||'[]');
+    return d.length;
+  })();
+  document.getElementById('msg').textContent = n > 0
+    ? '✅ ' + n + ' 件が注入されました。admin.html を開いてください。'
+    : '⚠ 注入に失敗しました。コンソールを確認してください。';
+}
+// 自動実行
+window.onload = run;
+</script>
+</body>
+</html>

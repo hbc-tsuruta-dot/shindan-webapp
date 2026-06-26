@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音声テスト</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0a0e1a;
+  color: #e0eeff;
+  font-family: 'Noto Sans JP', sans-serif;
+  min-height: 100vh;
+  padding: 30px 20px;
+}
+h1 { font-size: 20px; margin-bottom: 20px; color: #7ac8ff; }
+.text-area {
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+.text-area label { font-size: 12px; color: #88aacc; margin-bottom: 8px; display: block; }
+.text-area textarea {
+  width: 100%; background: none; border: none; color: #e0eeff;
+  font-size: 15px; resize: none; outline: none; line-height: 1.7;
+}
+.fetch-btn {
+  display: block; width: 100%; padding: 14px;
+  background: linear-gradient(170deg,#3abcff,#0050cc);
+  border: none; border-radius: 12px; color: white;
+  font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 24px;
+}
+.fetch-btn:disabled { opacity: .4; cursor: default; }
+.status { text-align: center; color: #88aacc; font-size: 13px; margin-bottom: 16px; }
+.voice-grid { display: flex; flex-direction: column; gap: 10px; }
+.voice-card {
+  background: rgba(255,255,255,.05);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: all .2s;
+}
+.voice-card:hover { background: rgba(255,255,255,.09); border-color: rgba(100,200,255,.3); }
+.voice-card.playing { border-color: rgba(30,180,255,.8); background: rgba(30,180,255,.1); }
+.voice-card.rec { border-color: rgba(100,200,255,.3); }
+.rec-badge {
+  font-size: 10px; background: rgba(30,180,255,.25);
+  border: 1px solid rgba(30,180,255,.4);
+  border-radius: 6px; padding: 2px 7px; color: #7ac8ff; white-space: nowrap;
+}
+.voice-name { font-size: 15px; font-weight: 700; flex: 1; }
+.voice-style { font-size: 12px; color: #88aacc; }
+.play-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(30,180,255,.2); border: 1.5px solid rgba(30,180,255,.4);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 14px;
+}
+.voice-card.playing .play-icon { background: rgba(30,180,255,.4); }
+</style>
+</head>
+<body>
+<h1>音声テスト — VOICEVOX</h1>
+
+<div class="text-area">
+  <label>試聴テキスト（自由に変更可）</label>
+  <textarea id="test-text" rows="3">出荷予定の製品に小さな傷を見つけました。納期は今日中です。あなたはどうしますか？</textarea>
+</div>
+
+<button class="fetch-btn" id="fetch-btn" onclick="fetchSpeakers()">VOICEVOXに接続して声一覧を取得</button>
+<div class="status" id="status">VOICEVOXを起動してから上のボタンを押してください</div>
+<div class="voice-grid" id="voice-grid"></div>
+
+<script>
+const RECOMMENDED = ['春日部つむぎ','四国めたん','WhiteCUL','雨晴はう','冥鳴ひまり'];
+let currentAudio = null;
+let currentCard = null;
+
+async function fetchSpeakers() {
+  const btn = document.getElementById('fetch-btn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  status.textContent = '接続中...';
+  try {
+    const res = await fetch('http://localhost:50021/speakers');
+    const speakers = await res.json();
+    renderVoices(speakers);
+    status.textContent = `${speakers.length}キャラクター取得完了。声をタップして試聴できます。`;
+  } catch(e) {
+    status.textContent = 'VOICEVOXに接続できません。起動しているか確認してください。';
+    btn.disabled = false;
+  }
+}
+
+function renderVoices(speakers) {
+  const grid = document.getElementById('voice-grid');
+  grid.innerHTML = '';
+
+  // おすすめを先に表示
+  const rec = speakers.filter(s => RECOMMENDED.includes(s.name));
+  const rest = speakers.filter(s => !RECOMMENDED.includes(s.name));
+  const ordered = [...rec, ...rest];
+
+  ordered.forEach(speaker => {
+    speaker.styles.forEach(style => {
+      const isRec = RECOMMENDED.includes(speaker.name) && style.name === 'ノーマル';
+      const card = document.createElement('div');
+      card.className = 'voice-card' + (isRec ? ' rec' : '');
+      card.innerHTML = `
+        <div class="play-icon">▶</div>
+        <div style="flex:1">
+          <div class="voice-name">${speaker.name}</div>
+          <div class="voice-style">${style.name}</div>
+        </div>
+        ${isRec ? '<span class="rec-badge">おすすめ</span>' : ''}
+      `;
+      card.onclick = () => playVoice(style.id, card);
+      grid.appendChild(card);
+    });
+  });
+}
+
+async function playVoice(speakerId, card) {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (currentCard) currentCard.classList.remove('playing');
+  card.classList.add('playing');
+  currentCard = card;
+  const text = document.getElementById('test-text').value;
+  try {
+    const qRes = await fetch(`http://localhost:50021/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId}`, { method: 'POST' });
+    const query = await qRes.json();
+    const sRes = await fetch(`http://localhost:50021/synthesis?speaker=${speakerId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(query)
+    });
+    const blob = await sRes.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => { card.classList.remove('playing'); currentAudio = null; };
+    audio.play();
+  } catch(e) {
+    card.classList.remove('playing');
+  }
+}
+</script>
+</body>
+</html>

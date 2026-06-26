@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>素材プレビュー</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #040a1e 0%, #08102a 40%, #040916 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  padding: 40px 24px;
+  font-family: 'Inter', 'Noto Sans JP', sans-serif;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle 250px at 15% 20%, rgba(95,0,255,0.50), transparent 70%),
+    radial-gradient(circle 220px at 85% 15%, rgba(0,140,255,0.40), transparent 70%),
+    radial-gradient(circle 180px at 20% 80%, rgba(235,0,115,0.35), transparent 70%);
+}
+section {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+h2 {
+  font-size: 11px; letter-spacing: .12em;
+  color: rgba(100,145,210,0.6); font-weight: 600; text-align: center;
+}
+
+/* ── ゲルボタン ── */
+.btn-wrap {
+  position: relative;
+  width: 300px; height: 96px;
+  cursor: pointer;
+  transition: transform .08s cubic-bezier(.2,.8,.2,1), filter .08s;
+  transform: translateY(-5px);
+  filter: drop-shadow(0 12px 0 rgba(0,8,50,0.85)) drop-shadow(0 18px 32px rgba(10,50,180,0.55)) drop-shadow(0 0 40px rgba(100,180,255,0.20));
+  user-select: none;
+}
+.btn-wrap:hover {
+  transform: translateY(-8px);
+  filter: drop-shadow(0 14px 0 rgba(0,8,50,0.85)) drop-shadow(0 22px 36px rgba(10,50,180,0.65)) drop-shadow(0 0 50px rgba(100,180,255,0.28));
+}
+.btn-wrap:active {
+  transform: translateY(5px) !important;
+  filter: drop-shadow(0 2px 0 rgba(0,8,50,0.90)) drop-shadow(0 4px 12px rgba(10,50,180,0.40)) drop-shadow(0 0 20px rgba(100,180,255,0.12)) brightness(0.88) !important;
+}
+#btn-canvas {
+  width: 100%; height: 100%;
+  display: block;
+}
+.btn-label {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800;
+  color: #1a3868;
+  letter-spacing: .06em;
+  pointer-events: none;
+  text-shadow: 0 1px 4px rgba(200,225,255,0.70), 0 0 12px rgba(140,200,255,0.40);
+}
+
+/* ── Galaxyカード ── */
+.card-outer {
+  width: 320px; border-radius: 22px; overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65), 0 0 40px rgba(120,60,255,0.22);
+}
+.card-outer img { width: 100%; display: block; }
+.card-overlay {
+  position: absolute; inset: 0;
+  background: rgba(5, 3, 20, 0.38);
+  backdrop-filter: saturate(140%);
+  -webkit-backdrop-filter: saturate(140%);
+  border-radius: 22px;
+  border: 1px solid rgba(160,100,255,0.25);
+}
+</style>
+</head>
+<body>
+
+<section>
+  <h2>ゲルボタン（クリックで押し込み確認）</h2>
+  <div class="btn-wrap" id="btnWrap">
+    <canvas id="btn-canvas"></canvas>
+    <span class="btn-label">スタート</span>
+  </div>
+</section>
+
+<section>
+  <h2>Galaxy カード</h2>
+  <div class="card-outer">
+    <img src="images/card-galaxy.png" alt="Galaxyカード">
+    <div class="card-overlay"></div>
+  </div>
+</section>
+
+<canvas id="work" style="display:none;"></canvas>
+
+<script>
+const img = new Image();
+img.src = 'images/btn-glass-topdown.png';
+img.onload = function() {
+  const work = document.getElementById('work');
+  work.width = img.naturalWidth;
+  work.height = img.naturalHeight;
+  const ctx = work.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+
+  const data = ctx.getImageData(0, 0, work.width, work.height);
+  const px = data.data;
+  for (let i = 0; i < px.length; i += 4) {
+    const r = px[i], g = px[i+1], b = px[i+2];
+    const brightness = (r + g + b) / 3;
+    const saturation = Math.max(r,g,b) - Math.min(r,g,b);
+    if (brightness > 235 && saturation < 20) {
+      px[i+3] = 0;
+    } else if (brightness > 215 && saturation < 28) {
+      px[i+3] = Math.round(((255 - brightness) / 40) * 255);
+    }
+  }
+  ctx.putImageData(data, 0, 0);
+
+  const out = document.getElementById('btn-canvas');
+  out.width = img.naturalWidth;
+  out.height = img.naturalHeight;
+  out.getContext('2d').drawImage(work, 0, 0);
+};
+
+document.getElementById('btnWrap').addEventListener('mousedown', function() {
+  this.style.transform = 'translateY(5px)';
+  this.style.filter = 'drop-shadow(0 2px 0 rgba(0,8,50,0.90)) drop-shadow(0 4px 12px rgba(10,50,180,0.40)) brightness(0.88)';
+});
+document.getElementById('btnWrap').addEventListener('mouseup', function() {
+  this.style.transform = '';
+  this.style.filter = '';
+});
+</script>
+</body>
+</html>

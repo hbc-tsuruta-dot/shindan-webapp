@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>現場適性診断 - 受験完了</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/glass.css">
+<style>
+.glass{
+  background:rgba(160,200,255,0.03)!important;
+  backdrop-filter:blur(4px) saturate(140%)!important;
+  -webkit-backdrop-filter:blur(4px) saturate(140%)!important;
+  border:2px solid rgba(15,22,38,0.88)!important;
+  box-shadow:
+    0 8px 32px rgba(0,0,20,0.45),
+    inset 0 2px 0 rgba(255,255,255,0.90),
+    inset -1.5px 0 0 rgba(200,225,255,0.45),
+    inset 1.5px 0 0 rgba(180,215,255,0.22),
+    inset 0 -1.5px 0 rgba(10,15,30,0.50)!important;
+}
+.glass h1,.glass p,.glass li{color:rgba(220,235,255,0.92)!important;}
+</style>
+</head>
+<body>
+
+<div class="phone" style="justify-content:center">
+
+  <div class="topbar">
+    <span class="logo-wrap"><span class="ic">📋</span>現場適性診断</span>
+    <button class="bgm-toggle" id="bgm-btn" onclick="toggleBGM()" type="button">🎤</button>
+  </div>
+
+  <div class="glass green pad done">
+    <div class="ic">✅</div>
+    <h1>受験完了しました</h1>
+    <p>ご回答ありがとうございました。<br>結果は担当者がご確認いたします。</p>
+  </div>
+
+  <div class="glass pad">
+    <ul class="info-list">
+      <li>このページは閉じていただいて構いません</li>
+      <li>結果については担当者よりご連絡します</li>
+      <li>送信後の回答変更はできません</li>
+    </ul>
+  </div>
+
+  <div class="navbar">
+    <button class="btn3d ghost" style="flex:1" onclick="goHome()">← トップに戻る</button>
+  </div>
+
+</div>
+
+<style>
+.bgm-toggle{background:none;border:2px solid rgba(255,255,255,.25);border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer;filter:grayscale(1);opacity:.4;transition:all .2s;flex-shrink:0;margin-left:auto;}
+.bgm-toggle.active{filter:grayscale(0);opacity:1;border-color:rgba(0,200,255,.6);box-shadow:0 0 8px rgba(0,200,255,.3);}
+</style>
+<script src="js/sound.js"></script>
+<script>
+function goHome(){ Sound.back(); setTimeout(() => { window.location.href = 'index.html'; }, 200); }
+function toggleBGM(){
+  var label = Sound.bgmCycle();
+  var btn = document.getElementById('bgm-btn');
+  if(label){ btn.classList.add('active'); btn.title = label; }
+  else { btn.classList.remove('active'); btn.title = 'BGM OFF'; }
+}
+Sound.bgmResume();
+if(Sound.bgmIsOn()) document.getElementById('bgm-btn').classList.add('active');
+</script>
+</body>
+</html>
