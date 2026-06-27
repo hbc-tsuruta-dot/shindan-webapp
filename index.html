@@ -24,7 +24,7 @@ body{
 .phone{
   width:100%;max-width:430px;
   height:100%;        /* fallback */
-  height:100dvh;      /* ブラウザUI除外 (Chrome108+/Safari15.4+) */
+  height:100svh;      /* ブラウザUI除外 (Chrome108+/Safari15.4+) */
   display:flex;flex-direction:column;
   position:relative;z-index:1;overflow:hidden;
   background:linear-gradient(180deg,#d0e8ff 0%,#4a9ee8 12%,#1565c0 30%,#0d47a1 55%,#0a2d6e 80%,#051535 100%);
@@ -177,7 +177,7 @@ body{
     0 0 28px 10px rgba(80,180,255,.28);
 }
 /* 波紋リング */
-.bgm-wrap{ position:relative;display:inline-flex;align-items:center;justify-content:center; }
+.bgm-wrap,.voice-guide-wrap{ position:relative;display:inline-flex;align-items:center;justify-content:center; }
 .ring{
   position:absolute;width:54px;height:54px;border-radius:50%;
   border:3px solid rgba(200,0,0,.8);
@@ -190,6 +190,14 @@ body{
 .bgm-wrap:has(.bgm-btn.active) .r1{ animation:ripple 1.8s ease-out infinite; }
 .bgm-wrap:has(.bgm-btn.active) .r2{ animation:ripple 1.8s ease-out .45s infinite; }
 .bgm-wrap:has(.bgm-btn.active) .r3{ animation:ripple 1.8s ease-out .9s infinite; }
+.vr1{border-color:rgba(0,160,255,.9);}
+.vr2{border-color:rgba(30,195,255,.85);}
+.vr3{border-color:rgba(70,220,255,.8);}
+.vr4{border-color:rgba(120,240,255,.75);}
+.voice-guide-wrap:has(#voice-guide-btn.playing) .vr1{ animation:ripple 1.8s ease-out infinite; }
+.voice-guide-wrap:has(#voice-guide-btn.playing) .vr2{ animation:ripple 1.8s ease-out .45s infinite; }
+.voice-guide-wrap:has(#voice-guide-btn.playing) .vr3{ animation:ripple 1.8s ease-out .9s infinite; }
+.voice-guide-wrap:has(#voice-guide-btn.playing) .vr4{ animation:ripple 1.8s ease-out 1.35s infinite; }
 .bgm-wrap:has(.bgm-btn.active) .r4{ animation:ripple 1.8s ease-out 1.35s infinite; }
 @keyframes ripple{
   0%  { transform:scale(1);   opacity:.85; }
@@ -452,7 +460,8 @@ body{
   box-shadow:none!important;
 }
 .f-input::placeholder{color:rgba(255,255,255,.45)!important;}
-.f-input:focus{border-color:rgba(255,255,255,.65)!important;}
+.f-input:focus{border-color:rgba(255,255,255,.65)!important;background:#fff!important;color:#000!important;}
+.f-input:not(:placeholder-shown){background:#fff!important;color:#000!important;}
 
 .f-field{margin-bottom:0;}
 .f-label{
@@ -666,10 +675,10 @@ body{
   position:absolute;
   left:0;
   bottom:-22px;
-  width:145px;
+  width:190px;
   height:22px;
   background:#111;
-  clip-path:polygon(4px 0,90px 0,120px 100%);
+  clip-path:polygon(4px 0,90px 0,55px 100%);
 }
 /* 内白テール（二重線） */
 .voice-guide-bubble::before{
@@ -677,10 +686,10 @@ body{
   position:absolute;
   left:0;
   bottom:-16px;
-  width:130px;
+  width:100px;
   height:16px;
   background:#fff;
-  clip-path:polygon(12px 0,82px 0,104px 100%);
+  clip-path:polygon(12px 0,82px 0,50px 100%);
   z-index:1;
 }
 @keyframes bubbleFloat{
@@ -691,25 +700,62 @@ body{
   animation:bubbleFloat 1.8s ease-in-out infinite;
 }
 .voice-guide-bubble.hidden{display:none;}
+.resume-bubble{
+  position:absolute;top:-70px;left:5%;right:5%;
+  padding:10px 14px;
+  background:#d32f2f;color:#fff;
+  font-family:'RocknRoll One','Noto Sans JP',sans-serif;
+  font-size:18px;font-weight:900;
+  line-height:1.45;text-align:center;
+  white-space:normal;
+  border-radius:8px;
+  border:7px solid #111;
+  box-shadow:inset 0 0 0 3px #d32f2f,4px 4px 0 rgba(0,0,0,.3);
+  z-index:200;pointer-events:none;
+}
+.resume-bubble::after{
+  content:'';position:absolute;left:0;bottom:-22px;
+  width:190px;height:22px;background:#111;
+  clip-path:polygon(4px 0,90px 0,55px 100%);
+}
+.resume-bubble::before{
+  content:'';position:absolute;left:0;bottom:-16px;
+  width:100px;height:16px;background:#d32f2f;
+  clip-path:polygon(12px 0,82px 0,50px 100%);z-index:1;
+}
 @keyframes circleIn{0%{opacity:0;}25%{opacity:1;}100%{opacity:1;}}
 @keyframes circleBlink{0%,100%{opacity:1;}45%,55%{opacity:0.08;}}
 #crayon-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:450;}
 
 /* ─────────────────────────────────
    スマホ専用レイアウト（CSS Grid）
+   ★ レイアウト v00 確定版（ずれた時はこの値に戻す）
+   ① logo-area      : top=+0.5行
+   ② sub-actions    : top=+0.5行
+   ③ hero-area      : top=-1.25行
+   ④ ctrl-wrap      : top=-2.5行
+   ⑤ info-above-mesid: top=-2.5行
+   ⑥⑦ form-card-wrap: top=-2.5行
+   ⑧ start-wrap     : position:fixed bottom=3行（変更禁止）
 ───────────────────────────────── */
 @media(max-width:539px){
-  .logo-area{ padding-top:calc(120px + env(safe-area-inset-top)); padding-bottom:12px; top:calc(1/30*100dvh); }
+  .logo-area{ padding-top:calc(120px + env(safe-area-inset-top)); padding-bottom:12px; padding-left:4px; padding-right:4px; top:calc(0.5/30*100svh); }
   .hbc-logo-img{ max-height:62px; }
-  .logo-frame{ padding:6px 16px; }
-  .voice-guide-bubble{ top:60px; }
-  .sub-actions{ padding-top:88px; top:calc(1/30*100dvh); }
-  .hero-area{ margin-top:78px; top:calc(-2/30*100dvh); }
-  .ctrl-wrap{ margin-top:6px; top:calc(-2/30*100dvh); }
-  .info-above-mesid{ margin-top:-8px; font-size:16px; top:calc(-2/30*100dvh); }
-  .form-card-wrap{ position:relative; margin-top:-20px; top:calc(-2/30*100dvh); }
+  .logo-frame{ padding:6px 6px; width:100%; }
+  .voice-guide-bubble{ top:60px; left:20px; }
+  .sub-actions{ padding-top:88px; top:calc(0.5/30*100svh); justify-content:space-evenly; padding-left:0; padding-right:0; }
+  .sub-actions .act-btn{ transform:scale(1.3) !important; }
+  .voice-guide-wrap{ left:-5vw; }
+  .sub-actions > a.act-btn{ position:relative; left:5vw; }
+  .hero-area{ margin-top:78px; margin-left:0; margin-right:0; top:calc(-1.25/30*100svh); min-height:95px; }
+  .hero-en{ font-size:min(13vw,57px) !important; font-size-adjust:from-font; }
+  .hero-ja-badge{ font-size:20px !important; }
+  .hero-sub{ font-size:16px !important; }
+  .ctrl-wrap{ margin-top:6px; top:calc(-2.5/30*100svh); }
+  .info-above-mesid{ margin-top:-8px; font-size:16px; top:calc(-2.5/30*100svh); }
+  .form-card-wrap{ position:relative; margin-top:-20px; top:calc(-2.5/30*100svh); }
   #spacer-bottom{ min-height:0; }
-  .start-wrap{ position:fixed !important; bottom:calc(3/30*100dvh + env(safe-area-inset-bottom)); left:14px; right:14px; background:transparent; z-index:500; }
+  .start-wrap{ position:fixed !important; bottom:calc(3/30*100svh + env(safe-area-inset-bottom)); left:12px; right:12px; background:transparent; z-index:500; }
 }
 
 /* vol-mid グロー */
@@ -753,6 +799,8 @@ body{
   .btn-start:hover{transform:translateY(-2px) scale(1.01);}
   .btn-start:active{transform:scale(0.98);}
 }
+/* 初回ロード時のフォントずれ防止 */
+.phone-init{visibility:hidden;}
 /* ── 番号ラベル（レイアウト確認用） ── */
 .logo-area,.sub-actions,.hero-area,.ctrl-wrap,.info-above-mesid,.form-card-wrap,.start-wrap{position:relative;}
 .logo-area::before{content:"① ロゴ";}
@@ -774,7 +822,7 @@ body{
 </head>
 <body>
 
-<div class="phone">
+<div class="phone phone-init">
 
   <!-- バブル背景 -->
   <div id="bubble-bg">
@@ -810,6 +858,10 @@ body{
   <!-- BGM + 管理者ボタン -->
   <div class="sub-actions">
     <div class="voice-guide-wrap">
+      <span class="ring vr1"></span>
+      <span class="ring vr2"></span>
+      <span class="ring vr3"></span>
+      <span class="ring vr4"></span>
       <button class="act-btn" id="voice-guide-btn" onclick="playGuidance()" type="button" title="音声ガイダンス">
         <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:28px">
           <polygon points="3,12 11,12 19,5 19,27 11,20 3,20" fill="white"/>
@@ -861,6 +913,7 @@ body{
 
   <!-- トグル -->
   <div class="ctrl-wrap">
+    <div id="resume-hint" class="resume-bubble" style="display:none;">前回の途中データがあります。<br>テスト開始で再開します。<br><span style="font-size:14px;">Có dữ liệu trước đó. Nhấn bắt đầu để tiếp tục.</span></div>
     <div class="ctrl-row1">
       <div class="glass-toggle" id="sw-lang">
         <button class="on" data-lang="ja" onclick="setLang('ja')">🇯🇵 日本語</button>
@@ -1046,6 +1099,10 @@ function startTest(){
   sessionStorage.setItem('ui_lang',        currentLang);
   const _at = document.getElementById('audio-toggle');
   sessionStorage.setItem('audio_mode', _at && _at.checked ? 'on' : 'off');
+  const draftKey = 'shindan_draft_' + mesid;
+  const draft = localStorage.getItem(draftKey);
+  if(draft){ sessionStorage.setItem('resume_draft', draft); }
+  else { sessionStorage.removeItem('resume_draft'); }
   setTimeout(()=>{ window.location.href='test.html'; }, 260);
 }
 
@@ -1067,6 +1124,8 @@ function onMesidInput(e){
   const id = el.value.trim();
   el.style.background = id ? '#fff' : '';
   el.style.color = id ? '#003060' : '';
+  const resumeHint = document.getElementById('resume-hint');
+  if(resumeHint) resumeHint.style.display = (id && localStorage.getItem('shindan_draft_'+id)) ? 'block' : 'none';
   const employees = JSON.parse(localStorage.getItem('shindan_employees')||'[]');
   const emp = employees.find(e => toHalf(e.id).trim().toLowerCase() === id);
   const ni = document.getElementById('name');
@@ -1097,33 +1156,21 @@ function onMesidInput(e){
 
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing)startTest();});
 
-var _bgmState = 0; // 0=OFF 1=小 2=中 3=大
-var _BGM_VOLS = [0, 0.18, 0.45, 0.85];
+var _bgmState = 0; // 0=OFF 1=小（ON）
+var _BGM_VOLS = [0, 0.03, 0.45, 0.85];
 function toggleBGM(){
-  _bgmState = (_bgmState + 1) % 4;
   var btn = document.getElementById('bgm-btn');
   btn.classList.remove('active','vol-low','vol-mid','vol-high');
-  if(_bgmState === 0){
+  if(_bgmState !== 0){
+    _bgmState = 0;
     Sound.bgmStop();
     btn.title = 'BGM';
   } else {
-    var vol = _BGM_VOLS[_bgmState];
-    if(_bgmState === 1){
-      var idx = parseInt(localStorage.getItem('bgm_index') || String(Math.floor(Math.random()*7)), 10);
-      Sound.bgmStart(idx, vol);
-      btn.classList.add('active','vol-low');
-      btn.title = 'BGM 小 ♪';
-    } else if(_bgmState === 2){
-      if(Sound.bgmIsOn()){ Sound.bgmSetVolume(vol); }
-      else { var idx2=parseInt(localStorage.getItem('bgm_index')||String(Math.floor(Math.random()*7)),10); Sound.bgmStart(idx2,vol); }
-      btn.classList.add('active','vol-mid');
-      btn.title = 'BGM 中 ♪♪';
-    } else {
-      if(Sound.bgmIsOn()){ Sound.bgmSetVolume(vol); }
-      else { var idx3=parseInt(localStorage.getItem('bgm_index')||String(Math.floor(Math.random()*7)),10); Sound.bgmStart(idx3,vol); }
-      btn.classList.add('active','vol-high');
-      btn.title = 'BGM 大 ♪♪♪';
-    }
+    _bgmState = 1;
+    var idx = parseInt(localStorage.getItem('bgm_index') || String(Math.floor(Math.random()*7)), 10);
+    Sound.bgmStart(idx, _BGM_VOLS[1]);
+    btn.classList.add('active','vol-low');
+    btn.title = 'BGM 小 ♪';
   }
 }
 
@@ -1232,6 +1279,11 @@ const GUIDE_SEGS = {
 
 function playGuidance(){
   _guideState = (_guideState + 1) % 3;
+  var _bgmPreIdx = -1;
+  if(_bgmState === 0 && _guideState > 0){
+    _bgmPreIdx = parseInt(localStorage.getItem('bgm_index') || String(Math.floor(Math.random()*7)), 10);
+    Sound.bgmPreload(_bgmPreIdx);
+  }
   if(_guideState > 0) _playBtnSound(_guideState);
   if(_guideAudio){ _guideAudio.pause(); _guideAudio = null; }
   document.getElementById('crayon-overlay').innerHTML = '';
@@ -1261,6 +1313,15 @@ function playGuidance(){
     _guideLastCircle = null;
   });
   _guideAudio.play().catch(()=>{});
+  if(_bgmPreIdx >= 0){
+    setTimeout(function(){
+      if(_bgmState !== 0) return;
+      Sound.bgmStart(_bgmPreIdx, _BGM_VOLS[1]);
+      _bgmState = 1;
+      var _btn = document.getElementById('bgm-btn');
+      if(_btn){ _btn.classList.add('active','vol-low'); _btn.title='BGM 小 ♪'; }
+    }, 3000);
+  }
 }
 
 function _drawCrayonCircle(selector){
@@ -1340,10 +1401,18 @@ function _drawCrayonCircle(selector){
     }
     el.appendChild(svg);
   }
-  window.addEventListener('load', function(){
+  function _init(){
     var el = document.getElementById('grid-overlay');
     if(el) _buildGrid(el);
-  });
+  }
+  var phone = document.querySelector('.phone');
+  if(!sessionStorage.getItem('_loaded')){
+    sessionStorage.setItem('_loaded','1');
+    setTimeout(function(){ location.reload(); }, 1000);
+  } else {
+    if(phone) phone.classList.remove('phone-init');
+  }
+  document.fonts.ready.then(function(){ setTimeout(_init, 80); });
 })();
 </script>
 </body>

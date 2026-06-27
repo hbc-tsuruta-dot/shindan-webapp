@@ -123,8 +123,10 @@ const _bgmTracks = [
 ];
 let _bgmAudio = null;
 let _bgmIndex = -1;
-let _bgmVolume = 0.07;
+let _bgmVolume = 0.005;
 let _bgmFading = false;
+let _bgmPreloadAudio = null;
+let _bgmPreloadIdx = -1;
 const _BGM_FADE_OUT = 2.5; // 曲終了前フェードアウト開始 (秒)
 const _BGM_FADE_STEP = 50;  // フェード更新間隔 (ms)
 
@@ -148,12 +150,21 @@ function _bgmFadeIn(audio, targetVol){
 }
 
 function _bgmPlay(idx){
-  if(_bgmAudio){ _bgmAudio.pause(); _bgmAudio = null; }
   _bgmFading = false;
   _bgmIndex = idx;
-  var audio = new Audio(_bgmTracks[idx].file);
-  audio.loop = false;
-  audio.volume = 0;
+  var audio;
+  var alreadyPlaying = false;
+  if(_bgmPreloadAudio && _bgmPreloadIdx === idx){
+    audio = _bgmPreloadAudio;
+    _bgmPreloadAudio = null;
+    _bgmPreloadIdx = -1;
+    alreadyPlaying = true;
+  } else {
+    if(_bgmAudio){ _bgmAudio.pause(); _bgmAudio = null; }
+    audio = new Audio(_bgmTracks[idx].file);
+    audio.loop = false;
+    audio.volume = 0;
+  }
   _bgmAudio = audio;
 
   audio.addEventListener('timeupdate', function(){
@@ -186,7 +197,11 @@ function _bgmPlay(idx){
     if(btn) btn.title = _bgmTracks[next].label;
   });
 
-  audio.play().then(function(){ _bgmFadeIn(audio, _bgmVolume); }).catch(function(){});
+  if(alreadyPlaying){
+    _bgmFadeIn(audio, _bgmVolume);
+  } else {
+    audio.play().then(function(){ _bgmFadeIn(audio, _bgmVolume); }).catch(function(){});
+  }
   localStorage.setItem('bgm_index', idx);
 }
 
@@ -213,6 +228,16 @@ function _bgmResume(){
   if(saved !== null) _bgmPlay(parseInt(saved, 10));
 }
 
+Sound.bgmPreload = function(idx){
+  if(isNaN(idx)||idx<0||idx>=_bgmTracks.length) idx=Math.floor(Math.random()*_bgmTracks.length);
+  if(_bgmPreloadAudio){ _bgmPreloadAudio.pause(); _bgmPreloadAudio = null; }
+  _bgmPreloadIdx = idx;
+  var audio = new Audio(_bgmTracks[idx].file);
+  audio.loop = false;
+  audio.volume = 0;
+  _bgmPreloadAudio = audio;
+  audio.play().catch(function(){});
+};
 Sound.bgmStart     = _bgmStart;
 Sound.bgmStop      = _bgmStop;
 Sound.bgmResume    = _bgmResume;

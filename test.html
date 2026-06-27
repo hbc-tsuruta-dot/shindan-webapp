@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dseg@0.46.0/css/dseg.min.css">
 <link rel="stylesheet" href="css/glass.css">
 <style>
 .phone{background:#000;gap:6px!important;padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;}
@@ -15,44 +16,40 @@
 .topbar{padding:8px 14px!important;border-radius:14px!important;}
 .live-badge{
   display:inline-flex;align-items:center;gap:6px;
-  font-size:28px;font-weight:900;color:#ff2020;
+  font-size:18px;font-weight:900;color:#ff2020;
   font-family:'Orbitron','Inter',sans-serif;letter-spacing:.1em;
   animation:liveBlink 2.2s step-end infinite;flex-shrink:0;
 }
-.live-dot{font-size:28px;line-height:1;}
+.live-dot{font-size:18px;line-height:1;}
 @keyframes liveBlink{0%,58%{opacity:1;}60%,100%{opacity:0;}}
 .who{font-size:11px!important;line-height:1.3!important;}
 
-/* 時計エリア */
-.clock-area{
-  position:relative;
-  height:96px;
-  flex-shrink:0;
+/* トップバー：LIVE + 時計 + タイマー 横一列 */
+.topbar{
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  height:calc(3/30*100svh)!important;
+  padding:4px 14px!important;
 }
 .clock-canvas{
-  position:absolute;
-  left:calc(50% - 140px);
-  top:3px;
   display:block;
-  width:90px!important;height:90px!important;
+  width:calc(2.5/30*100svh)!important;height:calc(2.5/30*100svh)!important;
+  flex-shrink:0;
+  margin-left:auto;
 }
-
-/* デジタルタイマー */
 .timer-big{
-  position:absolute;
-  left:calc(50% - 40px);
-  top:50%;
-  transform:translateY(-50%);
-  font-family:'Orbitron',monospace;
-  font-size:64px!important;font-weight:900!important;
+  font-family:'DSEG7 Classic','Impact','Arial Black',sans-serif!important;
+  font-size:clamp(48px,8svh,80px)!important;font-weight:900!important;
   color:#b8e0ff;
   white-space:nowrap;
   text-shadow:0 0 24px rgba(80,180,255,.8),0 0 48px rgba(40,120,255,.4);
   line-height:1;
   display:flex;align-items:center;
 }
-.td{display:inline-block;width:40px;text-align:center;}
-.ts{display:inline-block;width:20px;text-align:center;}
+.td{display:inline-block;width:clamp(30px,5svh,50px);text-align:center;}
+.ts{display:inline-block;width:clamp(14px,2svh,24px);text-align:center;}
 .timer-big.warn  {color:#ffcc44;text-shadow:0 0 20px rgba(255,200,0,.8),0 0 40px rgba(255,140,0,.4);}
 .timer-big.danger{color:#ff2040;text-shadow:0 0 20px rgba(255,0,40,.9),0 0 40px rgba(255,0,30,.5);}
 .timer-big.blink{animation:timerPulse .45s ease-in-out infinite alternate;}
@@ -63,9 +60,11 @@
   display:flex;align-items:center;gap:8px;flex-shrink:0;
   padding:0 4px;
 }
-.prog-row .chapter-tag{font-size:11px;padding:3px 10px;flex-shrink:0;}
-.prog-row .segbar{flex:1;}
-.prog-row .seg{height:6px!important;}
+.prog-row .chapter-tag{display:none!important;}
+.prog-row .segbar{flex:1;display:flex;gap:1px;height:14px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden;border:2px solid rgba(255,255,255,.2);}
+.prog-row .seg{flex:1;height:100%!important;background:rgba(255,255,255,.08);transition:background .3s;}
+.prog-row .seg.on{background:linear-gradient(180deg,#5cacff,#1a6edd);}
+.prog-row .seg.latest{background:linear-gradient(180deg,#80d0ff,#40a0ff);box-shadow:0 0 6px rgba(80,180,255,.6);}
 
 /* 設問カード：固定レイアウト（問題が変わっても高さ・位置が変わらない） */
 .q-card{
@@ -73,100 +72,165 @@
   border-radius:16px!important;padding:10px 14px!important;
   display:flex!important;flex-direction:column!important;
 }
-/* 問題カード：残りスペースを埋める・白ガラス光沢 */
+/* 問題カード：メタリックシルバー二重縁＋光沢 */
 .q-card{
-  flex:1!important;
+  flex:none!important;
+  height:calc(7/30*100svh)!important;
   display:flex!important;flex-direction:column!important;
-  background:rgba(255,255,255,.18)!important;
-  border:1px solid rgba(255,255,255,.45)!important;
-  box-shadow:0 8px 32px rgba(0,10,40,.45),inset 0 1px 0 rgba(255,255,255,.40)!important;
+  background:linear-gradient(180deg, #6a7080 0%, #4a5060 30%, #3a4050 60%, #505868 100%)!important;
+  border:none!important;
+  border-radius:18px!important;
+  box-shadow:
+    0 0 0 4px #c8ccd4,
+    0 0 0 6px #888e9a,
+    0 0 0 8px #c8ccd4,
+    inset 0 0 0 2px rgba(255,255,255,.8),
+    0 8px 20px rgba(0,10,40,.3)!important;
   overflow:hidden!important;
 }
 .q-card::before{
-  content:'';position:absolute;inset:0;border-radius:inherit;
-  pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 80% 44% at 50% 0%, rgba(255,255,255,.38) 0%, rgba(255,255,255,.06) 58%, transparent 100%),
-    linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 30%);
+  content:''!important;display:block!important;
+  position:absolute;top:0;left:0;right:0;height:28%;
+  border-radius:18px 18px 0 0;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg, rgba(255,255,255,.4) 0%, rgba(255,255,255,.08) 70%, transparent 100%)!important;
+}
+.q-card::after{
+  content:''!important;display:block!important;
+  position:absolute;bottom:0;left:0;right:0;height:30%;
+  border-radius:0 0 18px 18px;pointer-events:none;z-index:0;
+  background:linear-gradient(0deg, rgba(255,255,255,.25) 0%, rgba(255,255,255,.05) 60%, transparent 100%)!important;
 }
 
 /* 問題文エリア：固定高さ、文が長くてもABCD位置が変わらない */
 .q-text-area{
-  flex:0 0 175px;height:175px;
+  flex:1;height:auto;
   overflow-y:auto;
   scrollbar-width:none;-ms-overflow-style:none;
 }
 .q-text-area::-webkit-scrollbar{display:none;}
-.q-card .qhead{margin-bottom:6px!important;gap:8px!important;display:flex;align-items:center;}
-.q-card .qbadge{min-width:44px!important;height:44px!important;font-size:18px!important;padding:0 10px!important;}
-.read-btn{
-  margin-left:auto;background:none;
-  border:1.5px solid rgba(255,255,255,.25);border-radius:50%;
-  width:34px;height:34px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;padding:0;
-  color:white;opacity:.5;transition:opacity .2s,border-color .2s;flex-shrink:0;
+.q-card .qhead{display:flex!important;align-items:center!important;gap:8px!important;margin:0 0 4px 0!important;position:relative;z-index:1;}
+.q-card .q-text-area{position:relative;z-index:1;height:100%;overflow:auto;}
+.q-card .qbadge{
+  display:inline-block!important;
+  min-width:72px!important;height:32px!important;font-size:18px!important;padding:0 18px!important;
+  background:linear-gradient(180deg,#222,#000)!important;color:#fff!important;
+  border:1.5px solid #444!important;border-radius:4px!important;
+  font-weight:900!important;box-shadow:0 1px 3px rgba(0,0,0,.2)!important;
+  line-height:32px!important;flex-shrink:0!important;text-align:center!important;
 }
-.read-btn:hover{opacity:.9;}
-.read-btn.speaking{opacity:1;border-color:rgba(30,180,255,.8);box-shadow:0 0 8px rgba(30,180,255,.4);}
-.q-card .qtext{font-size:19px!important;line-height:1.55!important;}
+.q-card .chapter-tag-inner{
+  font-size:11px!important;color:rgba(255,255,255,.7)!important;font-weight:700!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+.read-btn{display:none!important;}
+.q-card .qtext{font-size:18px!important;line-height:1.5!important;color:#fff!important;position:relative;z-index:1;text-shadow:0 1px 3px rgba(0,0,0,.4);}
 
-/* 選択肢：カード底部に固定 */
-.q-card .opts{
-  margin-top:auto!important;
-  flex:0 0 auto!important;display:flex!important;flex-direction:column!important;
-  gap:10px!important;padding-bottom:4px;overflow:visible!important;
+/* 選択肢：カード外 */
+.opts-outer{
+  display:flex!important;flex-direction:column!important;
+  gap:calc(0.3/30*100svh)!important;padding:0!important;overflow:visible!important;
 }
-.q-card .opt{
+.opts-outer .opt{
   flex:none!important;
-  background:rgba(160,200,255,0.03)!important;
-  backdrop-filter:blur(4px) saturate(140%);
-  -webkit-backdrop-filter:blur(4px) saturate(140%);
-  padding:14px 14px!important;border-radius:14px!important;gap:10px!important;
-  transform:translateY(-2px)!important;
-  border:2px solid rgba(15,22,38,0.85)!important;
+  height:calc(2.6/30*100svh)!important;min-height:38px!important;
+  background:linear-gradient(180deg, #fff 0%, #e8eaf0 100%)!important;
+  border:none!important;
+  border-radius:14px!important;
   box-shadow:
-    0 5px 0 rgba(0,5,30,.65),
-    inset 0 2px 0 rgba(255,255,255,0.88),
-    inset -1.5px 0 0 rgba(200,225,255,0.40),
-    inset 0 -1.5px 0 rgba(10,15,30,0.45)!important;
+    0 0 0 3.5px #c8ccd4,
+    0 0 0 5.5px #888e9a,
+    0 0 0 7.5px #c8ccd4,
+    inset 0 0 0 1.5px rgba(255,255,255,.8),
+    0 3px 0 rgba(0,0,0,.12),
+    0 5px 12px rgba(0,10,40,.12)!important;
+  padding:0 12px!important;gap:10px!important;
   overflow:hidden!important;align-items:center!important;
+  position:relative;
 }
-.q-card .opt .b-wrap{position:relative;flex-shrink:0;display:inline-block;}
-.q-card .opt .b{width:44px!important;height:44px!important;font-size:22px!important;flex-shrink:0!important;}
-.q-card .opt .b-ico{position:relative;z-index:2;display:block;line-height:1;}
-.q-card .opt .b-lbl{
-  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
-  font-size:12px;font-weight:900;
-  padding:2px 9px;border-radius:20px;
-  z-index:10;white-space:nowrap;line-height:1.5;letter-spacing:.06em;
-  color:#fff;pointer-events:none;
-  text-shadow:0 1px 2px rgba(0,0,0,.5);
+.opts-outer .opt::before{
+  content:'';position:absolute;top:0;left:2%;right:2%;height:45%;
+  border-radius:0 0 40% 40%;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg, rgba(255,255,255,.9) 0%, rgba(255,255,255,.15) 60%, transparent 100%);
 }
-.q-card .opt[data-k="0"] .b-lbl{background:rgba(50,140,255,.95);box-shadow:0 2px 8px rgba(50,140,255,.5);}
-.q-card .opt[data-k="1"] .b-lbl{background:rgba(20,200,100,.95);box-shadow:0 2px 8px rgba(20,200,100,.5);}
-.q-card .opt[data-k="2"] .b-lbl{background:rgba(230,160,20,.95);box-shadow:0 2px 8px rgba(230,160,20,.5);}
-.q-card .opt[data-k="3"] .b-lbl{background:rgba(230,60,110,.95);box-shadow:0 2px 8px rgba(230,60,110,.5);}
-.q-card .opt .t{font-size:17px!important;line-height:1.45!important;}
+.opts-outer .opt::after{
+  content:'';position:absolute;bottom:0;left:5%;right:5%;height:30%;
+  border-radius:40% 40% 0 0;pointer-events:none;z-index:0;
+  background:linear-gradient(0deg, rgba(255,255,255,.5) 0%, rgba(255,255,255,.08) 60%, transparent 100%);
+}
+.opts-outer .opt .b-wrap{position:relative;flex-shrink:0;display:inline-block;}
+.opts-outer .opt .b{
+  width:38px!important;height:38px!important;flex-shrink:0!important;
+  border-radius:50%!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  font-size:20px!important;font-weight:900!important;color:#fff!important;
+}
+.opts-outer .opt[data-k="0"] .b{background:linear-gradient(135deg,#60b0ff,#1a6edd)!important;box-shadow:0 2px 6px rgba(30,100,220,.4)!important;}
+.opts-outer .opt[data-k="1"]{margin-top:calc(0.45/30*100svh)!important;}
+.opts-outer .opt[data-k="1"] .b{background:linear-gradient(135deg,#50e888,#15a050)!important;box-shadow:0 2px 6px rgba(20,160,80,.4)!important;}
+.opts-outer .opt[data-k="2"]{margin-top:calc(0.45/30*100svh)!important;}
+.opts-outer .opt[data-k="2"] .b{background:linear-gradient(135deg,#ffcc44,#dd8800)!important;box-shadow:0 2px 6px rgba(200,130,0,.4)!important;}
+.opts-outer .opt[data-k="3"]{margin-top:calc(0.45/30*100svh)!important;}
+.opts-outer .opt[data-k="3"] .b{background:linear-gradient(135deg,#ff7090,#dd2255)!important;box-shadow:0 2px 6px rgba(220,50,90,.4)!important;}
+.opts-outer .opt .b-lbl{display:none!important;}
+.opts-outer .opt .b-ico{font-size:20px!important;font-weight:900!important;line-height:1;color:#fff!important;}
+.opts-outer .opt .t{font-size:15px!important;line-height:1.45!important;color:#111!important;position:relative;z-index:1;}
 
 /* 選択状態 */
-.q-card .opt.sel::after{display:none!important;}
-.q-card .opt.sel{background:rgba(255,255,255,.18)!important;}
-.q-card .opt[data-k="0"].sel{background:rgba(74,168,255,.28)!important;border-color:rgba(74,168,255,.85)!important;}
-.q-card .opt[data-k="1"].sel{background:rgba(34,232,128,.24)!important;border-color:rgba(34,232,128,.85)!important;}
-.q-card .opt[data-k="2"].sel{background:rgba(255,184,64,.24)!important;border-color:rgba(255,184,64,.85)!important;}
-.q-card .opt[data-k="3"].sel{background:rgba(255,96,144,.24)!important;border-color:rgba(255,96,144,.85)!important;}
+.opts-outer .opt.sel::before,.opts-outer .opt.sel::after{opacity:.4!important;}
+.opts-outer .opt[data-k="0"].sel{background:linear-gradient(180deg,#4a9fff,#1560c0)!important;box-shadow:0 0 0 4px #1560c0,0 0 0 6.5px #0a3a80,0 0 0 8px #1560c0,inset 0 0 0 1.5px rgba(255,255,255,.3),0 4px 12px rgba(20,80,180,.4)!important;}
+.opts-outer .opt[data-k="1"].sel{background:linear-gradient(180deg,#30e888,#10a050)!important;box-shadow:0 0 0 4px #10a050,0 0 0 6.5px #066030,0 0 0 8px #10a050,inset 0 0 0 1.5px rgba(255,255,255,.3),0 4px 12px rgba(16,160,80,.4)!important;}
+.opts-outer .opt[data-k="2"].sel{background:linear-gradient(180deg,#ffcc55,#cc8800)!important;box-shadow:0 0 0 4px #cc8800,0 0 0 6.5px #885500,0 0 0 8px #cc8800,inset 0 0 0 1.5px rgba(255,255,255,.3),0 4px 12px rgba(200,130,0,.4)!important;}
+.opts-outer .opt[data-k="3"].sel{background:linear-gradient(180deg,#ff6088,#cc2050)!important;box-shadow:0 0 0 4px #cc2050,0 0 0 6.5px #801030,0 0 0 8px #cc2050,inset 0 0 0 1.5px rgba(255,255,255,.3),0 4px 12px rgba(200,30,80,.4)!important;}
+.opts-outer .opt.sel .t{color:#fff!important;}
+.opts-outer .opt.sel .b-ico{color:#fff!important;}
 
 /* ナビ */
-.navbar{gap:6px!important;margin-top:0!important;}
-.btn3d{padding:12px 10px!important;font-size:14px!important;border-radius:12px!important;
-  transform:translateY(-3px)!important;}
-.btn3d.blue,.btn3d.gold{box-shadow:0 6px 0 rgba(0,20,120,.6),0 8px 16px rgba(30,100,220,.4)!important;}
-.btn3d.ghost{box-shadow:0 6px 0 rgba(0,5,28,.6),0 8px 16px rgba(0,10,45,.3)!important;}
+.navbar{gap:6px!important;margin-top:0!important;padding:0!important;}
+.btn3d{padding:10px 10px!important;font-size:19px!important;font-weight:900!important;border-radius:12px!important;
+  transform:translateY(-3px)!important;
+  border:3px solid!important;
+  border-image:none!important;
+}
+.btn3d.blue.blink{
+  outline:4px solid rgba(255,255,255,.9)!important;
+  outline-offset:3px!important;
+  animation:btn-outline-glow 1s ease-in-out infinite!important;
+}
+@keyframes btn-outline-glow{
+  0%,100%{outline-color:rgba(255,255,255,0);outline-offset:3px;}
+  50%{outline-color:rgba(255,255,255,.95);outline-offset:5px;}
+}
+.btn3d.blue,.btn3d.gold{
+  background:linear-gradient(180deg,#5cacff 0%,#1a6edd 50%,#0f4ea0 100%)!important;
+  color:#fff!important;
+  border:4px solid #0a3570!important;border-radius:12px!important;
+  box-shadow:0 4px 0 #082a55,0 0 0 1.5px #4090dd,0 6px 12px rgba(10,50,110,.5),inset 0 2px 0 rgba(255,255,255,.4)!important;
+}
+.btn3d.ghost{
+  background:linear-gradient(180deg,#ff6666 0%,#cc2222 50%,#991111 100%)!important;
+  color:#fff!important;
+  border:4px solid #660a0a!important;border-radius:12px!important;
+  box-shadow:0 4px 0 #440505,0 0 0 1.5px #cc4444,0 6px 12px rgba(100,10,10,.4),inset 0 2px 0 rgba(255,255,255,.3)!important;
+  min-width:100px!important;padding:10px 20px!important;
+}
 
 /* Q番号ラベル */
-.q-num-lbl{font-size:10px;color:var(--txt-mute);text-align:right;padding:0 4px;flex-shrink:0;}
-.bgm-toggle{background:none;border:2px solid rgba(255,255,255,.25);border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer;filter:grayscale(1);opacity:.4;transition:all .2s;flex-shrink:0;margin-left:auto;}
-.bgm-toggle.active{filter:grayscale(0);opacity:1;border-color:rgba(0,200,255,.6);box-shadow:0 0 8px rgba(0,200,255,.3);}
+.q-num-lbl{font-size:8px;color:var(--txt-mute);text-align:right;padding:0 4px;flex-shrink:0;margin-top:-4px;}
+
+@media(max-width:539px){
+  .phone{
+    height:100svh!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+    max-width:100%!important;
+  }
+  .topbar{ position:relative; top:calc(-0.3/30*100svh); }
+  .prog-row{ position:relative; top:calc(-0.3/30*100svh); }
+  .q-card{ position:relative; top:calc(0.5/30*100svh); }
+  .opts-outer{ position:relative; top:calc(1/30*100svh); }
+  .q-num-lbl{ display:none; }
+  .navbar{ position:fixed; bottom:calc(0.5/30*100svh); left:calc(12px + 0.8/20*100vw); right:calc(12px + 0.8/20*100vw); z-index:100; }
+}
 </style>
 </head>
 <body>
@@ -175,14 +239,10 @@
 
   <div class="topbar">
     <span class="live-badge"><span class="live-dot">●</span>LIVE</span>
-    <span class="who" id="who"></span>
-    <button class="bgm-toggle" id="bgm-btn" onclick="toggleBGM()" type="button">🎤</button>
-  </div>
-
-  <div class="clock-area">
     <canvas id="clock-face" class="clock-canvas" width="120" height="120"></canvas>
     <div class="timer-big" id="timer"><span class="td" id="td0">4</span><span class="td" id="td1">0</span><span class="ts">.</span><span class="td" id="td2">0</span><span class="td" id="td3">0</span></div>
   </div>
+  <span class="who" id="who" style="display:none"></span>
 
   <div class="prog-row">
     <span class="chapter-tag" id="chapter-tag">第1章</span>
@@ -193,25 +253,19 @@
     <div class="q-text-area">
       <div class="qhead">
         <span class="qbadge" id="qbadge">Q1</span>
-        <button class="read-btn" id="read-btn" onclick="readAloud()" title="読み上げ">
-          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="1" y="7" width="5" height="6" rx="1.2" fill="white"/>
-            <path d="M6 7 L12 2 L12 18 L6 13 Z" fill="white"/>
-            <path d="M14 8 Q16.5 10 14 12" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-            <path d="M15.5 5.5 Q19.5 10 15.5 14.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-          </svg>
-        </button>
+        <span class="chapter-tag-inner" id="chapter-tag-inner">第1章</span>
       </div>
       <div class="qtext" id="q-text">読み込み中...</div>
     </div>
-    <div class="opts" id="options-area"></div>
   </div>
+
+  <div class="opts opts-outer" id="options-area"></div>
 
   <div class="q-num-lbl" id="q-num-lbl">Q1 / 50</div>
 
   <div class="navbar">
     <button class="btn3d ghost" id="btn-prev" onclick="prevQuestion()" style="display:none">◀ 戻る</button>
-    <button class="btn3d ghost" id="btn-abort" onclick="abortTest()" style="flex:0 0 auto;min-width:72px;font-size:13px;padding:14px 10px;background:rgba(255,60,60,.15);border-color:rgba(255,80,80,.35);color:rgba(255,160,160,.9)">中断</button>
+    <button class="btn3d ghost" id="btn-abort" onclick="abortTest()">中断</button>
     <button class="btn3d blue"  id="btn-next" onclick="nextQuestion()" disabled>次へ ▶</button>
   </div>
 
@@ -234,6 +288,7 @@ const QUESTIONS  = (TEST_TYPE === 'manager') ? QUESTIONS_MANAGER : QUESTIONS_WOR
 const TYPE_LABEL = (TEST_TYPE === 'manager') ? '管理者・リーダー' : '作業者';
 
 const _preview = new URLSearchParams(location.search).has('preview');
+const UI_LANG = sessionStorage.getItem('ui_lang') || 'ja';
 const examineeName  = sessionStorage.getItem('examinee_name')  || (_preview ? 'テスト 太郎' : null);
 const examineeDept  = sessionStorage.getItem('examinee_dept')  || (_preview ? '製造ライン' : '');
 const examineeMesid = sessionStorage.getItem('examinee_mesid') || '';
@@ -295,9 +350,11 @@ function handleTimeout(){
 function loadQuestion(idx){
   const q = QUESTIONS[idx], total = QUESTIONS.length;
   document.getElementById('qbadge').textContent = 'Q' + (idx + 1);
-  document.getElementById('chapter-tag').textContent = q.chapter.replace(/（.*?）/g,'').trim();
+  const chapterStr = q.chapter.replace(/（.*?）/g,'').trim();
+  document.getElementById('chapter-tag').textContent = chapterStr;
+  document.getElementById('chapter-tag-inner').textContent = chapterStr;
   document.getElementById('q-num-lbl').textContent = `Q${idx+1} / ${total}`;
-  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-text').textContent = (UI_LANG==='vi' && q.text_vi) ? q.text_vi : q.text;
   segEls.forEach((el,i) => { el.classList.toggle('on', i <= idx); el.classList.toggle('latest', i === idx); });
 
   const area = document.getElementById('options-area');
@@ -309,17 +366,17 @@ function loadQuestion(idx){
     const btn = document.createElement('button');
     btn.className = 'opt' + (answers[idx] === opt.label ? ' sel' : '');
     btn.dataset.k = k;
-    const optIcons = ['◆','◆','◆','◆'];
-    btn.innerHTML = `<span class="b-wrap"><span class="b-lbl">${displayLabels[k]}</span><span class="b"><span class="b-ico">${optIcons[k]}</span></span></span><span class="t">${opt.text}</span>`;
+    const optText = (UI_LANG==='vi' && opt.text_vi) ? opt.text_vi : opt.text;
+    btn.innerHTML = `<span class="b-wrap"><span class="b"><span class="b-ico">${displayLabels[k]}</span></span></span><span class="t">${optText}</span>`;
     btn.onclick = () => selectOption(idx, opt.label, btn);
     area.appendChild(btn);
   });
 
-  document.getElementById('btn-prev').style.display = idx > 0 ? 'block' : 'none';
+  document.getElementById('btn-prev').style.display = 'none';
   const nextBtn = document.getElementById('btn-next');
   nextBtn.disabled = !answers[idx];
   if (idx === total - 1){
-    nextBtn.textContent = '送信する ▶';
+    nextBtn.textContent = '保存・終了 ▶';
     nextBtn.className = 'btn3d gold';
     nextBtn.onclick = submitTest;
   } else {
@@ -335,7 +392,9 @@ function selectOption(qIdx, label, clickedBtn){
   Sound.select();
   document.querySelectorAll('#options-area .opt').forEach(b => b.classList.remove('sel'));
   clickedBtn.classList.add('sel');
-  document.getElementById('btn-next').disabled = false;
+  const nxBtn = document.getElementById('btn-next');
+  nxBtn.disabled = false;
+  nxBtn.classList.add('blink');
 }
 
 function pickFemaleVoice(){
@@ -376,6 +435,7 @@ function readAloud(){
 
 function nextQuestion(){
   if (!answers[currentQ]) return;
+  document.getElementById('btn-next').classList.remove('blink');
   window.speechSynthesis && window.speechSynthesis.cancel();
   Sound.next();
   currentQ++;
@@ -389,9 +449,20 @@ function prevQuestion(){
 }
 
 function abortTest(){
-  if (confirm('テストを中断しますか？\n回答は保存されません。')) {
+  if (confirm('テストを中断しますか？\n回答を一時保存します。再開はMES IDを入力してください。')) {
     stopTimer();
     Sound.abort();
+    const draft = {
+      mesid: examineeMesid,
+      name: examineeName,
+      dept: examineeDept,
+      type: TEST_TYPE,
+      currentQ: currentQ,
+      answers: answers,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem('shindan_draft_' + examineeMesid, JSON.stringify(draft));
+    sessionStorage.removeItem('_loaded');
     setTimeout(() => { window.location.href = 'index.html'; }, 350);
   }
 }
@@ -410,6 +481,8 @@ function submitTest(){
   const all = JSON.parse(localStorage.getItem('shindan_results') || '[]');
   all.push(result);
   localStorage.setItem('shindan_results', JSON.stringify(all));
+  localStorage.removeItem('shindan_draft_' + examineeMesid);
+  sessionStorage.removeItem('_loaded');
   setTimeout(() => { window.location.href = 'complete.html'; }, 420);
 }
 
@@ -489,17 +562,56 @@ function drawClock(){
 window.addEventListener('load', () => {
   if (typeof QUESTIONS === 'undefined') return;
   setInterval(()=>{ elapsedSec++; }, 1000);
-  loadQuestion(0);
+  let rawDraft = sessionStorage.getItem('resume_draft');
+  if (!rawDraft && examineeMesid) {
+    rawDraft = localStorage.getItem('shindan_draft_' + examineeMesid);
+  }
+  if (rawDraft) {
+    try {
+      const draft = JSON.parse(rawDraft);
+      answers  = draft.answers  || {};
+      currentQ = draft.currentQ || 0;
+      sessionStorage.removeItem('resume_draft');
+      Object.keys(answers).forEach(i => {
+        const el = segEls[i]; if(el) el.classList.add('answered');
+      });
+    } catch(e) { currentQ = 0; }
+  }
+  loadQuestion(currentQ);
 });
 
 function toggleBGM(){
-  var label = Sound.bgmCycle();
+  if(Sound.bgmIsOn()){ Sound.bgmStop(); }
+  else { Sound.bgmStart(); }
   var btn = document.getElementById('bgm-btn');
-  if(label){ btn.classList.add('active'); btn.title = label; }
-  else { btn.classList.remove('active'); btn.title = 'BGM OFF'; }
+  if(btn){
+    if(Sound.bgmIsOn()){ btn.classList.add('active'); btn.title = Sound.bgmLabel() || 'BGM'; }
+    else { btn.classList.remove('active'); btn.title = 'BGM OFF'; }
+  }
 }
-Sound.bgmResume();
-if(Sound.bgmIsOn()) document.getElementById('bgm-btn').classList.add('active');
+try{ Sound.bgmResume(); var _bb=document.getElementById('bgm-btn'); if(_bb&&Sound.bgmIsOn()) _bb.classList.add('active'); }catch(e){}
+
+(function(){
+  var g=document.createElement('div');
+  g.style.cssText='position:fixed;top:0;left:0;width:100%;height:100svh;pointer-events:none;z-index:9999;';
+  for(var i=0;i<=30;i++){
+    var h=document.createElement('div');
+    h.style.cssText='position:absolute;left:0;right:0;height:1px;background:rgba(0,255,80,.5);top:calc('+i+'/30*100svh);';
+    var s=document.createElement('span');
+    s.textContent=i;
+    s.style.cssText='position:absolute;left:2px;top:-13px;font-size:10px;font-weight:900;color:#0f0;font-family:monospace;text-shadow:0 0 3px #000;';
+    h.appendChild(s);g.appendChild(h);
+  }
+  for(var j=0;j<=20;j++){
+    var v=document.createElement('div');
+    v.style.cssText='position:absolute;top:0;bottom:0;width:1px;background:rgba(0,255,80,.3);left:calc('+j+'/20*100%);';
+    var s2=document.createElement('span');
+    s2.textContent=j;
+    s2.style.cssText='position:absolute;top:2px;left:2px;font-size:9px;font-weight:900;color:#0f0;font-family:monospace;text-shadow:0 0 3px #000;';
+    v.appendChild(s2);g.appendChild(v);
+  }
+  document.body.appendChild(g);
+})();
 </script>
 </body>
 </html>
